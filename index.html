@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portafolio Digital — Arquitectura de Software</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+  <!-- LOGIN MODAL -->
+  <div id="loginModal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <button class="modal-close" id="closeLogin"><i class="fa fa-times"></i></button>
+      <div class="modal-logo"><span class="icon-lock"><i class="fa fa-shield-halved"></i></span></div>
+      <h2 class="modal-title">Acceso Administrador</h2>
+      <p class="modal-sub">Ingresa tus credenciales para gestionar el portafolio</p>
+      <div class="form-group">
+        <label>Usuario</label>
+        <input type="text" id="loginUser" placeholder="admin" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <div class="pass-wrap">
+          <input type="password" id="loginPass" placeholder="••••••••"/>
+          <button class="toggle-pass" onclick="togglePass()"><i class="fa fa-eye" id="eyeIcon"></i></button>
+        </div>
+      </div>
+      <div id="loginError" class="login-error hidden">Usuario o contraseña incorrectos</div>
+      <button class="btn-login" id="btnLogin" onclick="handleLogin()">
+        <span>Ingresar</span><i class="fa fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- UPLOAD MODAL -->
+  <div id="uploadModal" class="modal-overlay hidden">
+    <div class="modal-box upload-box">
+      <button class="modal-close" id="closeUpload" onclick="closeUploadModal()"><i class="fa fa-times"></i></button>
+      <div class="modal-logo"><span class="icon-lock"><i class="fa fa-cloud-arrow-up"></i></span></div>
+      <h2 class="modal-title">Subir Archivo</h2>
+      <p class="modal-sub" id="uploadSubtitle">Semana — Unidad —</p>
+      <div class="form-group">
+        <label>Título del archivo</label>
+        <input type="text" id="fileTitle" placeholder="Ej: Diagrama de componentes"/>
+      </div>
+      <div class="form-group">
+        <label>Descripción (opcional)</label>
+        <textarea id="fileDesc" placeholder="Breve descripción del contenido..." rows="2"></textarea>
+      </div>
+      <div class="drop-zone" id="dropZone">
+        <i class="fa fa-file-arrow-up"></i>
+        <p>Arrastra tu archivo aquí o <span>haz clic para seleccionar</span></p>
+        <small>PDF, JPG, PNG — máx. 20MB</small>
+        <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" hidden/>
+      </div>
+      <div id="filePreview" class="file-preview hidden"></div>
+      <div id="uploadProgress" class="upload-progress hidden">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <span id="progressText">Subiendo...</span>
+      </div>
+      <div id="uploadError" class="login-error hidden"></div>
+      <button class="btn-login" id="btnUpload" onclick="uploadFile()">
+        <span>Subir Archivo</span><i class="fa fa-upload"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- VIEW MODAL -->
+  <div id="viewModal" class="modal-overlay hidden">
+    <div class="modal-box view-box">
+      <button class="modal-close" onclick="closeViewModal()"><i class="fa fa-times"></i></button>
+      <div id="viewContent"></div>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-left">
+      <div class="logo-mark">
+        <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+          <rect x="1" y="1" width="16" height="16" rx="2" stroke="var(--accent)" stroke-width="1.5"/>
+          <rect x="21" y="1" width="16" height="16" rx="2" stroke="var(--accent)" stroke-width="1.5" fill="var(--accent)" fill-opacity="0.15"/>
+          <rect x="1" y="21" width="16" height="16" rx="2" stroke="var(--accent)" stroke-width="1.5" fill="var(--accent)" fill-opacity="0.15"/>
+          <rect x="21" y="21" width="16" height="16" rx="2" stroke="var(--accent)" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <span class="logo-text">AS<span class="dot">.</span></span>
+    </div>
+    <div class="header-center">
+      <span class="header-title">Portafolio</span>
+    </div>
+    <div class="header-right">
+      <span class="author-name">Aliaga Llocclla Hector</span>
+      <button class="btn-admin" id="adminBtn" onclick="openLoginModal()">
+        <i class="fa fa-lock"></i><span>Admin</span>
+      </button>
+      <button class="btn-logout hidden" id="logoutBtn" onclick="logout()">
+        <i class="fa fa-right-from-bracket"></i><span>Salir</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero-section" id="heroSection">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-content">
+      <div class="hero-badge">Arquitectura de Software · 2024</div>
+      <h1 class="hero-title">
+        Portafolio<br/>
+        <span class="hero-title-accent">Digital</span>
+      </h1>
+      <p class="hero-desc">
+        Documentación progresiva del aprendizaje en <strong>Arquitectura de Software</strong>.<br/>
+        Cuatro unidades, dieciséis semanas de evolución conceptual y práctica.
+      </p>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">4</span><span class="stat-label">Unidades</span></div>
+        <div class="stat-div"></div>
+        <div class="stat"><span class="stat-num">16</span><span class="stat-label">Semanas</span></div>
+        <div class="stat-div"></div>
+        <div class="stat"><span class="stat-num" id="totalFiles">0</span><span class="stat-label">Archivos</span></div>
+      </div>
+      <a href="#main-content" class="hero-scroll-btn" onclick="scrollToContent()">
+        <span>Ver Semanas</span><i class="fa fa-chevron-down"></i>
+      </a>
+    </div>
+    <div class="hero-deco">
+      <div class="deco-circle c1"></div>
+      <div class="deco-circle c2"></div>
+      <div class="deco-lines">
+        <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="200" cy="200" r="150" stroke="var(--accent)" stroke-opacity="0.07" stroke-width="1"/>
+          <circle cx="200" cy="200" r="100" stroke="var(--accent)" stroke-opacity="0.1" stroke-width="1"/>
+          <circle cx="200" cy="200" r="50" stroke="var(--accent)" stroke-opacity="0.15" stroke-width="1"/>
+          <line x1="50" y1="200" x2="350" y2="200" stroke="var(--accent)" stroke-opacity="0.06" stroke-width="1"/>
+          <line x1="200" y1="50" x2="200" y2="350" stroke="var(--accent)" stroke-opacity="0.06" stroke-width="1"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- NAV UNITS -->
+  <nav class="units-nav" id="main-content">
+    <div class="units-nav-inner">
+      <button class="unit-tab active" data-unit="1" onclick="switchUnit(1)">
+        <span class="unit-num">U1</span>
+        <span class="unit-name">Unidad 1</span>
+      </button>
+      <button class="unit-tab" data-unit="2" onclick="switchUnit(2)">
+        <span class="unit-num">U2</span>
+        <span class="unit-name">Unidad 2</span>
+      </button>
+      <button class="unit-tab" data-unit="3" onclick="switchUnit(3)">
+        <span class="unit-num">U3</span>
+        <span class="unit-name">Unidad 3</span>
+      </button>
+      <button class="unit-tab" data-unit="4" onclick="switchUnit(4)">
+        <span class="unit-num">U4</span>
+        <span class="unit-name">Unidad 4</span>
+      </button>
+    </div>
+    <div class="unit-indicator" id="unitIndicator"></div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="unit-header" id="unitHeader">
+      <div class="unit-header-info">
+        <span class="unit-label" id="unitLabel">Unidad 1</span>
+        <h2 class="unit-title" id="unitTitle">Fundamentos de Arquitectura</h2>
+        <p class="unit-desc" id="unitDesc">Introducción a los conceptos base de la arquitectura de software, estilos y atributos de calidad.</p>
+      </div>
+      <div class="unit-weeks-count">
+        <span id="unitWeeksCount">Semanas 1–4</span>
+      </div>
+    </div>
+
+    <div class="weeks-grid" id="weeksGrid">
+      <!-- Generado por JS -->
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <div class="footer-logo">
+          <span class="logo-text">AS<span class="dot">.</span></span>
+          <span class="footer-subtitle">Portafolio Digital</span>
+        </div>
+        <p class="footer-copy">© 2024 Aliaga Llocclla Hector · Arquitectura de Software</p>
+      </div>
+      <div class="footer-center">
+        <p class="footer-quote">"La arquitectura es la voluntad de una época traducida al espacio."</p>
+      </div>
+      <div class="footer-right">
+        <p class="footer-connect">Conecta conmigo</p>
+        <div class="social-links">
+          <a href="#" class="social-btn" title="GitHub"><i class="fab fa-github"></i></a>
+          <a href="#" class="social-btn" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="social-btn" title="Email"><i class="fa fa-envelope"></i></a>
+          <a href="#" class="social-btn" title="Twitter/X"><i class="fab fa-x-twitter"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <span>Desarrollado con HTML · CSS · JavaScript · Supabase</span>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>
