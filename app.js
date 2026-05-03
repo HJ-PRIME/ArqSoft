@@ -201,7 +201,7 @@ async function viewFile(fileId) {
   if (!file) return;
 
   // Get public URL
-  const { data } = db.storage.from('portfolio').getPublicUrl(file.storage_path);
+  const { data } = db.storage.from('portfolio-files').getPublicUrl(file.storage_path);
   const url = data.publicUrl;
 
   const isPdf = file.file_type === 'pdf';
@@ -392,7 +392,7 @@ async function uploadFile() {
   try {
     // Upload to Supabase Storage
     const { error: storageErr } = await db.storage
-      .from('portfolio')
+      .from('portfolio-files')
       .upload(path, selectedFile, { contentType: selectedFile.type, upsert: false });
 
     if (storageErr) throw storageErr;
@@ -456,7 +456,7 @@ async function deleteFile(event, fileId, storagePath) {
   try {
     // Delete from storage
     const { error: storageErr } = await db.storage
-      .from('portfolio')
+      .from('portfolio-files')
       .remove([storagePath]);
 
     if (storageErr) console.warn('Storage delete:', storageErr.message);
